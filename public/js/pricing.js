@@ -11,32 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginBtn) { loginBtn.textContent = 'Dashboard'; loginBtn.href = '/dashboard'; }
     if (signupBtn) signupBtn.style.display = 'none';
   }
-
-  // ---- Mobile Menu Toggle ----
-  const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-  const navLinks = document.getElementById('navLinks');
-  const navbar = document.getElementById('navbar') || document.querySelector('.navbar');
-  if (mobileMenuToggle && navLinks) {
-    mobileMenuToggle.addEventListener('click', () => {
-      navLinks.classList.toggle('open');
-      if (navbar) navbar.classList.toggle('menu-open');
-      mobileMenuToggle.textContent = navLinks.classList.contains('open') ? '✕' : '☰';
-    });
-    // Close menu when clicking a link
-    navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('open');
-        if (navbar) navbar.classList.remove('menu-open');
-        mobileMenuToggle.textContent = '☰';
-      });
-    });
-  }
 });
 
 // ---- Subscribe ----
 async function handleSubscribe(planType) {
   try {
-    showToast('Processing mock payment...', 'info');
+    showToast('Processing payment...', 'info');
 
     // This bypasses Razorpay entirely and upgrades the user
     await api.request('POST', '/payments/mock-upgrade', { planType });
@@ -47,7 +27,7 @@ async function handleSubscribe(planType) {
       if(profile) api.setAuth(profile, api.accessToken);
     } catch(e) {}
 
-    showToast('Payment successful! 🎉 Upgrading your plan...', 'success');
+    showToast('Payment successful. Your plan has been upgraded.', 'success');
     
     // Refresh user data or just redirect to dashboard
     setTimeout(() => {
@@ -61,10 +41,4 @@ async function handleSubscribe(planType) {
       showToast(err.message || 'Payment upgrade failed', 'error');
     }
   }
-}
-
-// ---- FAQ Toggle ----
-function toggleFaq(btn) {
-  const item = btn.closest('.faq-item');
-  item.classList.toggle('open');
 }

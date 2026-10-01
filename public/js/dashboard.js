@@ -38,16 +38,14 @@ async function loadUserInfo() {
     const user = api.getUser();
     if (user) {
       document.getElementById('userName').textContent = user.display_name || user.email;
-      document.getElementById('userPlan').textContent = `${user.plan_type || 'free'} plan`;
-      document.getElementById('userAvatar').textContent = (user.display_name || user.email).charAt(0).toUpperCase();
+      document.getElementById('userPlan').textContent = user.plan_type || 'free';
     }
 
     // Fetch fresh profile
     const profile = await api.getProfile();
     if(profile) api.setAuth(profile, api.accessToken);
     document.getElementById('userName').textContent = profile.display_name || profile.email;
-    document.getElementById('userPlan').textContent = `${profile.plan_type} plan`;
-    document.getElementById('userAvatar').textContent = (profile.display_name || profile.email).charAt(0).toUpperCase();
+    document.getElementById('userPlan').textContent = profile.plan_type;
   } catch (err) {
     console.error('Failed to load profile:', err);
   }
@@ -67,16 +65,10 @@ async function loadDashboardStats() {
     const topLinkCard = document.getElementById('topLinkCard');
     if (stats.topLink) {
       topLinkCard.innerHTML = `
-        <div style="space-y: 8px;">
-          <p style="font-family: var(--font-mono); color: var(--accent-primary); font-weight: 600; font-size: 1.1rem; margin-bottom: 8px;">
-            /${stats.topLink.shortCode}
-          </p>
-          <p style="color: var(--text-muted); font-size: 0.8125rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 12px;">
-            ${stats.topLink.longUrl}
-          </p>
-          <p style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary);">
-            ${stats.topLink.clicks.toLocaleString()} <span style="font-size: 0.875rem; color: var(--text-muted); font-weight: 400;">clicks</span>
-          </p>
+        <div class="top-link">
+          <div class="code">/${escapeHtml(stats.topLink.shortCode)}</div>
+          <div class="url" title="${escapeHtml(stats.topLink.longUrl)}">${escapeHtml(stats.topLink.longUrl)}</div>
+          <div class="clicks">${stats.topLink.clicks.toLocaleString()} <span class="muted" style="font-size:14px; font-weight:400;">clicks</span></div>
         </div>
       `;
     }
@@ -107,14 +99,11 @@ function renderClicksChart(data) {
       datasets: [{
         label: 'Clicks',
         data: values,
-        borderColor: '#6C63FF',
-        backgroundColor: 'rgba(108, 99, 255, 0.1)',
-        fill: true,
-        tension: 0.4,
-        pointBackgroundColor: '#6C63FF',
-        pointBorderColor: '#6C63FF',
-        pointRadius: 4,
-        pointHoverRadius: 6,
+        borderColor: '#1a5fb4',
+        backgroundColor: '#1a5fb4',
+        borderWidth: 2,
+        tension: 0,
+        pointRadius: 3,
       }],
     },
     options: {
@@ -123,14 +112,15 @@ function renderClicksChart(data) {
       plugins: {
         legend: { display: false },
       },
+      animation: false,
       scales: {
         x: {
-          grid: { color: 'rgba(255,255,255,0.03)' },
-          ticks: { color: '#6B6B8D', font: { size: 11 } },
+          grid: { color: '#eaeef2' },
+          ticks: { color: '#656d76', font: { size: 11 } },
         },
         y: {
-          grid: { color: 'rgba(255,255,255,0.03)' },
-          ticks: { color: '#6B6B8D', font: { size: 11 } },
+          grid: { color: '#eaeef2' },
+          ticks: { color: '#656d76', font: { size: 11 }, precision: 0 },
           beginAtZero: true,
         },
       },
@@ -159,32 +149,33 @@ async function loadLinks(page = 1) {
 
     tbody.innerHTML = data.links.map(link => `
       <tr>
-        <td>
-          <span class="short-code" onclick="copyToClipboard('${link.shortUrl}')" title="Click to copy">
-            /${link.shortCode}
-          </span>
+        <td class="nowrap">
+          <a class="short-code" href="${escapeHtml(toHref(link.shortUrl))}" target="_blank">/${escapeHtml(link.shortCode)}</a>
         </td>
         <td>
-          <div style="font-weight:600; font-size:0.9375rem; color:var(--text-primary); margin-bottom:4px; max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(link.title || 'Untitled Link')}">${escapeHtml(link.title || 'Untitled Link')}</div>
-          <a href="${escapeHtml(link.longUrl)}" target="_blank" class="long-url" title="${escapeHtml(link.longUrl)}" style="text-decoration:none;">${escapeHtml(link.longUrl)}</a>
+          <div class="title" title="${escapeHtml(link.title || '')}">${escapeHtml(link.title || 'Untitled')}</div>
+          <a href="${escapeHtml(link.longUrl)}" target="_blank" class="long-url" title="${escapeHtml(link.longUrl)}">${escapeHtml(link.longUrl)}</a>
         </td>
-        <td class="clicks">${link.clickCount.toLocaleString()}</td>
-        <td style="color:var(--text-muted); font-size:0.8125rem;">${timeAgo(link.createdAt)}</td>
-        <td style="color:var(--text-muted); font-size:0.8125rem;">${link.expiresAt ? new Date(link.expiresAt).toLocaleDateString(undefined, {year: 'numeric', month: 'short', day: 'numeric'}) : 'Never'}</td>
+        <td>${link.clickCount.toLocaleString()}</td>
+        <td class="nowrap muted">${timeAgo(link.createdAt)}</td>
+        <td class="nowrap muted">${link.expiresAt ? new Date(link.expiresAt).toLocaleDateString(undefined, {year: 'numeric', month: 'short', day: 'numeric'}) : 'Never'}</td>
         <td>
           ${link.isActive
-        ? '<span class="badge badge-active">Active</span>'
-        : '<span class="badge badge-expired">Inactive</span>'
+        ? '<span class="status on">Active</span>'
+        : '<span class="status off">Inactive</span>'
       }
-          ${link.hasPassword ? '🔒' : ''}
-          ${link.oneTime ? '1️⃣' : ''}
+          ${link.hasPassword || link.oneTime
+        ? `<span class="flags">${[link.hasPassword && 'Password', link.oneTime && 'One-time'].filter(Boolean).join(', ')}</span>`
+        : ''
+      }
         </td>
         <td>
-          <div class="link-actions">
-            <button onclick="copyToClipboard('${link.shortUrl}')" title="Copy">📋</button>
-            <button onclick="viewAnalytics(${link.id})" title="Analytics">📊</button>
-            <button onclick="openEditModal(${link.id})" title="Edit">✏️</button>
-            <button onclick="deleteLink(${link.id})" title="Delete" style="color:var(--error);">🗑️</button>
+          <div class="actions">
+            <button class="btn btn-sm" onclick="copyToClipboard('${link.shortUrl}')">Copy</button>
+            <button class="btn btn-sm" onclick="viewAnalytics(${link.id})">Stats</button>
+            <button class="btn btn-sm" onclick="showQRCode(${link.id})">QR</button>
+            <button class="btn btn-sm" onclick="openEditModal(${link.id})">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteLink(${link.id})">Delete</button>
           </div>
         </td>
       </tr>
@@ -194,9 +185,9 @@ async function loadLinks(page = 1) {
     const { page: p, totalPages } = data.pagination;
     currentPage = p;
     pagination.innerHTML = `
-      <button onclick="loadLinks(${p - 1})" ${p <= 1 ? 'disabled' : ''}>← Prev</button>
+      <button onclick="loadLinks(${p - 1})" ${p <= 1 ? 'disabled' : ''}>Previous</button>
       <span class="page-info">Page ${p} of ${totalPages || 1}</span>
-      <button onclick="loadLinks(${p + 1})" ${p >= totalPages ? 'disabled' : ''}>Next →</button>
+      <button onclick="loadLinks(${p + 1})" ${p >= totalPages ? 'disabled' : ''}>Next</button>
     `;
   } catch (err) {
     console.error('Failed to load links:', err);
@@ -223,7 +214,7 @@ function openCreateModal() {
   if (user && user.plan_type === 'free') {
     aliasInput.disabled = true;
     aliasInput.title = 'Upgrade to Pro or Business to use custom aliases';
-    aliasInput.placeholder = 'Upgrade to unlock 🔒';
+    aliasInput.placeholder = 'Available on paid plans';
     if(aliasBadge) aliasBadge.style.display = 'inline-block';
   } else {
     aliasInput.disabled = false;
@@ -264,7 +255,7 @@ async function handleCreateLink(e) {
   } catch (err) {
     showToast(err.message, 'error');
   } finally {
-    btn.textContent = 'Create Short Link';
+    btn.textContent = 'Create link';
     btn.disabled = false;
   }
 }
@@ -319,28 +310,29 @@ async function handleEditLink(e) {
     if (pwd) updates.password = pwd;
 
     await api.updateLink(id, updates);
-    showToast('Link updated successfully', 'success');
+    showToast('Link updated', 'success');
     closeEditModal();
     loadLinks(currentPage);
     loadDashboardStats();
   } catch (err) {
     showToast(err.message || 'Failed to update link', 'error');
   } finally {
-    btn.textContent = 'Save Changes';
+    btn.textContent = 'Save';
     btn.disabled = false;
   }
 }
 
 // ---- Delete Link ----
 async function deleteLink(id) {
+  if (!confirm('Delete this link? This cannot be undone.')) return;
   try {
     const btn = document.querySelector(`button[onclick="deleteLink(${id})"]`);
     if(btn) {
       btn.disabled = true;
-      btn.innerHTML = `⏱️`;
+      btn.textContent = 'Deleting...';
     }
     await api.deleteLink(id);
-    showToast('Link has been deleted successfully', 'success');
+    showToast('Link deleted', 'success');
     loadLinks(currentPage);
     loadDashboardStats();
   } catch (err) {
@@ -400,8 +392,8 @@ async function viewAnalytics(linkId) {
     document.getElementById('analyticsView').classList.add('active');
     document.getElementById('pageTitle').textContent = 'Link Analytics';
 
-    // Update sidebar
-    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+    // Clear active tab
+    document.querySelectorAll('.dash-nav a').forEach(l => l.classList.remove('active'));
 
     window.history.pushState(null, null, '#analytics');
   } catch (err) {
@@ -426,29 +418,29 @@ function renderAnalyticsTimeChart(data) {
         {
           label: 'Clicks',
           data: data.map(d => d.clicks),
-          borderColor: '#6C63FF',
-          backgroundColor: 'rgba(108, 99, 255, 0.1)',
-          fill: true,
-          tension: 0.4,
+          borderColor: '#1a5fb4',
+          backgroundColor: '#1a5fb4',
+          borderWidth: 2,
+          pointRadius: 2,
         },
         {
           label: 'Unique',
           data: data.map(d => d.uniqueClicks),
-          borderColor: '#00D9A3',
-          backgroundColor: 'rgba(0, 217, 163, 0.05)',
-          fill: true,
-          tension: 0.4,
-          borderDash: [5, 5],
+          borderColor: '#8c959f',
+          backgroundColor: '#8c959f',
+          borderWidth: 2,
+          pointRadius: 2,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: '#B0B0C8', font: { size: 11 } } } },
+      animation: false,
+      plugins: { legend: { labels: { color: '#1f2328', boxWidth: 12, font: { size: 12 } } } },
       scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#6B6B8D', font: { size: 10 } } },
-        y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#6B6B8D' }, beginAtZero: true },
+        x: { grid: { color: '#eaeef2' }, ticks: { color: '#656d76', font: { size: 10 } } },
+        y: { grid: { color: '#eaeef2' }, ticks: { color: '#656d76', precision: 0 }, beginAtZero: true },
       },
     },
   });
@@ -458,7 +450,7 @@ function renderAnalyticsDeviceChart(devices) {
   const ctx = document.getElementById('analyticsDeviceChart');
   if (analyticsDeviceChart) analyticsDeviceChart.destroy();
 
-  const colors = ['#6C63FF', '#FF6584', '#00D9A3', '#FFB547', '#2ED8FF'];
+  const colors = ['#1a5fb4', '#8c959f', '#2e7d32', '#e0a100', '#c62828'];
 
   analyticsDeviceChart = new Chart(ctx, {
     type: 'doughnut',
@@ -467,16 +459,17 @@ function renderAnalyticsDeviceChart(devices) {
       datasets: [{
         data: devices.map(d => d.clicks),
         backgroundColor: colors.slice(0, devices.length),
-        borderWidth: 0,
+        borderWidth: 1,
+        borderColor: '#fff',
       }],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      animation: false,
       plugins: {
-        legend: { position: 'bottom', labels: { color: '#B0B0C8', padding: 16, font: { size: 11 } } },
+        legend: { position: 'bottom', labels: { color: '#1f2328', boxWidth: 12, font: { size: 12 } } },
       },
-      cutout: '65%',
     },
   });
 }
@@ -484,7 +477,7 @@ function renderAnalyticsDeviceChart(devices) {
 function renderBreakdownList(elementId, items, nameKey) {
   const el = document.getElementById(elementId);
   if (!items || items.length === 0) {
-    el.innerHTML = '<li style="color:var(--text-muted); justify-content:center;">No data yet</li>';
+    el.innerHTML = '<li class="muted">No data yet</li>';
     return;
   }
   el.innerHTML = items.map(item => `
@@ -509,7 +502,7 @@ function handleRouteChange() {
   document.getElementById('linksView').style.display = hash === 'links' ? 'block' : 'none';
   document.getElementById('analyticsView').classList.toggle('active', hash === 'analytics');
 
-  document.querySelectorAll('.sidebar-link[data-view]').forEach(l => {
+  document.querySelectorAll('.dash-nav a[data-view]').forEach(l => {
     l.classList.toggle('active', l.dataset.view === hash);
   });
 
@@ -520,24 +513,11 @@ function handleRouteChange() {
 }
 
 function switchView(view) {
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebarOverlay');
-  if(sidebar) sidebar.classList.remove('open');
-  if(overlay) overlay.classList.remove('open');
-
   if (window.location.hash.replace('#', '') !== view) {
     window.location.hash = view; // Triggers handleRouteChange
   } else {
     handleRouteChange(); // Force render if already there
   }
-}
-
-// ---- Mobile Sidebar ----
-function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebarOverlay');
-  if(sidebar) sidebar.classList.toggle('open');
-  if(overlay) overlay.classList.toggle('open');
 }
 
 // ---- Logout ----

@@ -4,172 +4,111 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description"
-    content="Choose the perfect NanoURL plan for your needs. Free, Pro, and Business tiers available.">
-  <title>Pricing — NanoURL</title>
-  <link rel="stylesheet" href="/css/base.css">
-  <link rel="stylesheet" href="/css/landing.css">
-  <link rel="stylesheet" href="/css/pricing.css">
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔗</text></svg>">
+  <meta name="description" content="NanoURL plans: Free, Pro and Business.">
+  <title>Pricing - NanoURL</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar scrolled" id="navbar">
-    <div class="navbar-inner">
-      <a href="/" class="navbar-brand">
-        <span class="logo-icon">⚡</span>
-        <span>NanoURL</span>
-      </a>
-      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle Menu">☰</button>
-      <div class="navbar-links" id="navLinks">
-        <a href="/#features">Features</a>
-        <a href="/pricing">Pricing</a>
-        <a href="/api-docs" target="_blank">API</a>
-        <a href="/login" class="btn btn-ghost btn-sm" id="navLoginBtn">Log In</a>
-        <a href="/signup" class="btn btn-primary btn-sm" id="navSignupBtn">Get Started</a>
-      </div>
+  <header class="header">
+    <div class="container">
+      <a href="/" class="brand">NanoURL</a>
+      <nav class="nav">
+        <a href="/pricing" class="hide-sm">Pricing</a>
+        <a href="/api-docs" target="_blank" class="hide-sm">API</a>
+        <a href="/login" id="navLoginBtn">Log in</a>
+        <a href="/signup" class="btn btn-primary btn-sm" id="navSignupBtn">Sign up</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <div class="pricing-page">
-    <div class="pricing-header">
-      <h1>Simple, <span class="text-gradient">transparent</span> pricing</h1>
-      <p>Start free and scale as you grow. No hidden fees, no surprises.</p>
+  <main class="container">
+    <div class="page-title">
+      <h1>Pricing</h1>
+      <p>Start on the free plan and upgrade when you need more.</p>
     </div>
 
     <div class="pricing-grid">
-      <!-- Free Tier -->
-      <div class="pricing-card glass-card">
-        <div class="pricing-name">Free</div>
-        <div class="pricing-desc">Perfect for getting started</div>
-        <div class="pricing-price">
-          <span class="currency">₹</span>
-          <span class="amount">0</span>
-          <span class="period">/month</span>
-        </div>
-        <div class="pricing-billing">Free forever</div>
-        <ul class="pricing-features">
-          <li><span class="check">✓</span> 100 links/month</li>
-          <li><span class="check">✓</span> Basic analytics</li>
-          <li><span class="check">✓</span> QR code generation</li>
-          <li><span class="check">✓</span> Link expiry</li>
-          <li class="disabled"><span class="check">✗</span> Custom aliases</li>
-          <li class="disabled"><span class="check">✗</span> Password protection</li>
-          <li class="disabled"><span class="check">✗</span> API access</li>
+      <div class="plan">
+        <h3>Free</h3>
+        <p class="desc">For trying it out</p>
+        <div class="price">&#8377;0 <span>/ month</span></div>
+        <ul>
+          <li>100 links per month</li>
+          <li>Basic analytics</li>
+          <li>QR codes</li>
+          <li>Link expiry</li>
+          <li class="no">Custom aliases</li>
+          <li class="no">Password protection</li>
+          <li class="no">API access</li>
         </ul>
-        <div class="pricing-cta">
-          <a href="/signup" class="btn btn-secondary">Get Started Free</a>
-        </div>
+        <a href="/signup" class="btn">Sign up free</a>
       </div>
 
-      <!-- Pro Tier -->
-      <div class="pricing-card glass-card featured">
-        <div class="pricing-popular">Most Popular</div>
-        <div class="pricing-name">Pro</div>
-        <div class="pricing-desc">For creators & marketers</div>
-        <div class="pricing-price">
-          <span class="currency">₹</span>
-          <span class="amount">199</span>
-          <span class="period">/month</span>
-        </div>
-        <div class="pricing-billing">Billed monthly</div>
-        <ul class="pricing-features">
-          <li><span class="check">✓</span> Unlimited links</li>
-          <li><span class="check">✓</span> Advanced analytics</li>
-          <li><span class="check">✓</span> Custom aliases</li>
-          <li><span class="check">✓</span> Password-protected links</li>
-          <li><span class="check">✓</span> One-time links</li>
-          <li><span class="check">✓</span> Link editing</li>
-          <li><span class="check">✓</span> No ads</li>
+      <div class="plan featured">
+        <div class="tag">Most popular</div>
+        <h3>Pro</h3>
+        <p class="desc">For creators and marketers</p>
+        <div class="price">&#8377;199 <span>/ month</span></div>
+        <ul>
+          <li>Unlimited links</li>
+          <li>Advanced analytics</li>
+          <li>Custom aliases</li>
+          <li>Password-protected links</li>
+          <li>One-time links</li>
+          <li>Link editing</li>
+          <li>No ads</li>
         </ul>
-        <div class="pricing-cta">
-          <button class="btn btn-primary" onclick="handleSubscribe('pro')">Upgrade to Pro</button>
-        </div>
+        <button class="btn btn-primary" onclick="handleSubscribe('pro')">Upgrade to Pro</button>
       </div>
 
-      <!-- Business Tier -->
-      <div class="pricing-card glass-card">
-        <div class="pricing-name">Business</div>
-        <div class="pricing-desc">For teams & enterprises</div>
-        <div class="pricing-price">
-          <span class="currency">₹</span>
-          <span class="amount">499</span>
-          <span class="period">/month</span>
-        </div>
-        <div class="pricing-billing">Billed monthly</div>
-        <ul class="pricing-features">
-          <li><span class="check">✓</span> Everything in Pro</li>
-          <li><span class="check">✓</span> API access</li>
-          <li><span class="check">✓</span> Team management</li>
-          <li><span class="check">✓</span> Priority support</li>
-          <li><span class="check">✓</span> Custom domains</li>
-          <li><span class="check">✓</span> Bulk URL shortening</li>
-          <li><span class="check">✓</span> Webhook integrations</li>
+      <div class="plan">
+        <h3>Business</h3>
+        <p class="desc">For teams</p>
+        <div class="price">&#8377;499 <span>/ month</span></div>
+        <ul>
+          <li>Everything in Pro</li>
+          <li>API access</li>
+          <li>Team management</li>
+          <li>Priority support</li>
+          <li>Custom domains</li>
+          <li>Bulk shortening</li>
+          <li>Webhooks</li>
         </ul>
-        <div class="pricing-cta">
-          <button class="btn btn-secondary" onclick="handleSubscribe('business')">Get Business</button>
-        </div>
+        <button class="btn" onclick="handleSubscribe('business')">Upgrade to Business</button>
       </div>
     </div>
 
-    <!-- FAQ -->
-    <div class="faq-section">
-      <h2>Frequently Asked Questions</h2>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          <span>Can I cancel anytime?</span>
-          <span class="arrow">▼</span>
-        </button>
-        <div class="faq-answer">
-          <p>Yes! You can cancel your subscription at any time. You'll continue to have access until the end of your
-            billing period.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          <span>What payment methods do you accept?</span>
-          <span class="arrow">▼</span>
-        </button>
-        <div class="faq-answer">
-          <p>We accept all major credit/debit cards, UPI, net banking, and digital wallets through our Razorpay payment
-            gateway.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          <span>Do free links expire?</span>
-          <span class="arrow">▼</span>
-        </button>
-        <div class="faq-answer">
-          <p>No! All links you create are permanent by default. You can optionally set an expiry date on any link.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          <span>Is there an API for developers?</span>
-          <span class="arrow">▼</span>
-        </button>
-        <div class="faq-answer">
-          <p>Yes! Our REST API is available on the Business plan. Complete documentation is available at /api-docs.</p>
-        </div>
-      </div>
+    <div class="faq">
+      <h2>FAQ</h2>
+      <details>
+        <summary>Can I cancel anytime?</summary>
+        <p>Yes. You keep access until the end of the billing period.</p>
+      </details>
+      <details>
+        <summary>What payment methods do you accept?</summary>
+        <p>Cards, UPI, net banking and wallets through Razorpay.</p>
+      </details>
+      <details>
+        <summary>Do free links expire?</summary>
+        <p>No. Links are permanent unless you set an expiry date yourself.</p>
+      </details>
+      <details>
+        <summary>Is there an API?</summary>
+        <p>Yes, on the Business plan. See <a href="/api-docs" target="_blank">/api-docs</a>.</p>
+      </details>
     </div>
-  </div>
+  </main>
 
-  <!-- Footer -->
   <footer class="footer">
-    <p>© 2026 NanoURL. Built with ❤️ for the internet.</p>
-    <div class="footer-links">
-      <a href="/api-docs" target="_blank">API Docs</a>
-      <a href="/pricing">Pricing</a>
-      <a href="https://github.com/theNahraf/NanoUrl-Shortner" target="_blank">GitHub</a>
+    <div class="container">
+      <span>&copy; 2026 NanoURL</span>
+      <span>
+        <a href="/api-docs" target="_blank">API docs</a>
+        <a href="/pricing">Pricing</a>
+        <a href="https://github.com/theNahraf/NanoUrl-Shortner" target="_blank">GitHub</a>
+      </span>
     </div>
   </footer>
 

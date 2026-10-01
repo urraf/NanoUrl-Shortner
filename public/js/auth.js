@@ -24,11 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         await api.login(email, password);
-        showToast('Welcome back! 👋', 'success');
-        setTimeout(() => window.location.href = '/dashboard', 500);
+        window.location.href = '/dashboard';
       } catch (err) {
         showToast(err.message, 'error');
-        btn.textContent = 'Log In';
+        btn.textContent = 'Log in';
         btn.disabled = false;
       }
     });
@@ -54,11 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         await api.signup(email, password, displayName);
-        showToast('Account created! 🎉', 'success');
-        setTimeout(() => window.location.href = '/dashboard', 500);
+        window.location.href = '/dashboard';
       } catch (err) {
         showToast(err.message, 'error');
-        btn.textContent = 'Create Account';
+        btn.textContent = 'Create account';
         btn.disabled = false;
       }
     });
@@ -71,9 +69,9 @@ function togglePassword() {
   const btn = input.nextElementSibling;
   if (input.type === 'password') {
     input.type = 'text';
-    btn.textContent = '🙈';
+    btn.textContent = 'Hide';
   } else {
     input.type = 'password';
-    btn.textContent = '👁️';
+    btn.textContent = 'Show';
   }
 }

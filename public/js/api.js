@@ -212,16 +212,9 @@ window.showToast = function (message, type = 'info') {
     document.body.appendChild(container);
   }
 
-  const icons = {
-    success: '✅',
-    error: '❌',
-    warning: '⚠️',
-    info: 'ℹ️',
-  };
-
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
-  toast.innerHTML = `<span>${icons[type] || ''}</span><span>${message}</span>`;
+  toast.textContent = message;
   container.appendChild(toast);
 
   setTimeout(() => toast.remove(), 4000);
@@ -242,4 +235,9 @@ window.copyToClipboard = async function (text) {
     input.remove();
     showToast('Copied to clipboard!', 'success');
   }
+};
+
+// The API returns short URLs without a protocol (e.g. "localhost:3000/abc")
+window.toHref = function (url) {
+  return /^https?:\/\//.test(url) ? url : `${window.location.protocol}//${url}`;
 };

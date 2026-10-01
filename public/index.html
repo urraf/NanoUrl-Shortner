@@ -4,194 +4,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description"
-    content="NanoURL — The fastest, most powerful URL shortener. Shorten links, track analytics, and grow your brand with our enterprise-grade platform.">
-  <title>NanoURL — Intelligent URL Shortener</title>
-  <link rel="stylesheet" href="/css/base.css">
-  <link rel="stylesheet" href="/css/landing.css">
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔗</text></svg>">
+  <meta name="description" content="NanoURL - shorten links, generate QR codes and track clicks.">
+  <title>NanoURL - URL Shortener</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
 
-  <!-- Animated Background -->
-  <div class="landing-bg"></div>
-
-  <!-- Navbar -->
-  <nav class="navbar" id="navbar">
-    <div class="navbar-inner">
-      <a href="/" class="navbar-brand">
-        <span class="logo-icon">⚡</span>
-        <span>NanoURL</span>
-      </a>
-      <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle Menu">☰</button>
-      <div class="navbar-links" id="navLinks">
-        <a href="/">Home</a>
-        <a href="#features">Features</a>
-        <a href="/pricing">Pricing</a>
-        <a href="/api-docs" target="_blank">API</a>
-        <a href="/login" class="btn btn-ghost btn-sm" id="navLoginBtn">Log In</a>
-        <a href="/signup" class="btn btn-primary btn-sm" id="navSignupBtn">Get Started</a>
-      </div>
+  <header class="header">
+    <div class="container">
+      <a href="/" class="brand">NanoURL</a>
+      <nav class="nav">
+        <a href="/pricing" class="hide-sm">Pricing</a>
+        <a href="/api-docs" target="_blank" class="hide-sm">API</a>
+        <a href="/login" id="navLoginBtn">Log in</a>
+        <a href="/signup" class="btn btn-primary btn-sm" id="navSignupBtn">Sign up</a>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-badge">
-      <span class="dot"></span>
-      <span>Trusted by 10,000+ creators worldwide</span>
-    </div>
+  <main class="container">
+    <section class="hero">
+      <h1>Shorten your links</h1>
+      <p>Paste a long URL to get a short one. Sign up to manage your links and see click stats.</p>
 
-    <h1>
-      Shorten. Track.<br>
-      <span class="text-gradient">Dominate.</span>
-    </h1>
+      <div class="box">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="shorten" type="button" onclick="switchLandingTab('shorten')">Short link</button>
+          <button class="tab-btn" data-tab="qr" type="button" onclick="switchLandingTab('qr')">QR code</button>
+        </div>
 
-    <p class="hero-subtitle">
-      Transform long, ugly URLs into powerful short links. Track every click with real-time analytics and scale your
-      reach.
-    </p>
-
-    <!-- URL Shortener Input -->
-    <div class="url-input-card glass-card">
-      <div class="url-tabs">
-        <button class="tab-btn active" data-tab="shorten" type="button" onclick="switchLandingTab('shorten')">🔗 Shorten
-          a Link</button>
-        <button class="tab-btn" data-tab="qr" type="button" onclick="switchLandingTab('qr')">📱 Generate QR
-          Code</button>
-      </div>
-
-      <div id="shortenTabContent" class="tab-content active">
-        <form id="shortenForm" class="url-input-wrapper">
-          <div class="input-with-icon">
-            <input type="url" class="input" id="urlInput" placeholder="Paste your long URL here..." required
-              autocomplete="off">
-            <button type="button" class="paste-icon-btn" onclick="handlePaste('urlInput')"
-              title="Paste from clipboard">📋</button>
+        <div id="shortenTabContent" class="tab-content active">
+          <form id="shortenForm" class="inline-form">
+            <input type="url" class="input" id="urlInput" placeholder="https://example.com/some/long/url" required autocomplete="off">
+            <button type="submit" class="btn btn-primary" id="shortenBtn"><span id="btnText">Shorten</span></button>
+          </form>
+          <div class="result-card" id="resultCard">
+            <div class="result-row">
+              <a class="short-url" id="shortUrlOutput" target="_blank"></a>
+              <button class="btn btn-sm" id="copyBtn" onclick="copyToClipboard(document.getElementById('shortUrlOutput').textContent)">Copy</button>
+            </div>
           </div>
-          <button type="submit" class="btn btn-primary" id="shortenBtn">
-            <span id="btnText">Shorten</span>
-            <span id="btnLoader" class="hidden">⏳</span>
-          </button>
-        </form>
-        <div class="result-card" id="resultCard">
-          <div class="result-url">
-            <span class="short-url" id="shortUrlOutput"></span>
-            <button class="copy-btn" id="copyBtn"
-              onclick="copyToClipboard(document.getElementById('shortUrlOutput').textContent)">
-              📋 Copy
-            </button>
+        </div>
+
+        <div id="qrTabContent" class="tab-content">
+          <form id="qrForm" class="inline-form">
+            <input type="url" class="input" id="qrUrlInput" placeholder="https://example.com" required autocomplete="off">
+            <button type="submit" class="btn btn-primary" id="qrBtn"><span id="qrBtnText">Generate</span></button>
+          </form>
+          <div class="result-card qr-result" id="qrResultCard">
+            <img id="landingQrImage" src="" alt="QR code">
+            <button class="btn btn-sm" onclick="downloadLandingQr()">Download PNG</button>
           </div>
         </div>
       </div>
+    </section>
 
-      <div id="qrTabContent" class="tab-content">
-        <form id="qrForm" class="url-input-wrapper">
-          <div class="input-with-icon">
-            <input type="url" class="input" id="qrUrlInput" placeholder="Paste URL to generate QR code..." required
-              autocomplete="off">
-            <button type="button" class="paste-icon-btn" onclick="handlePaste('qrUrlInput')"
-              title="Paste from clipboard">📋</button>
-          </div>
-          <button type="submit" class="btn btn-primary" id="qrBtn">
-            <span id="qrBtnText">Generate</span>
-            <span id="qrBtnLoader" class="hidden">⏳</span>
-          </button>
-        </form>
-        <div class="result-card" id="qrResultCard" style="text-align:center;">
-          <img id="landingQrImage" src="" alt="QR Code"
-            style="background:white;padding:16px;border-radius:8px;max-width:200px;margin-bottom:16px;display:inline-block;">
-          <div>
-            <button class="btn btn-secondary" onclick="downloadLandingQr()">📥 Download QR</button>
-          </div>
+    <section class="features">
+      <h2>Features</h2>
+      <div class="feature-list">
+        <div>
+          <h4>Fast redirects</h4>
+          <p>Short codes are cached in Redis so redirects don't hit the database every time.</p>
+        </div>
+        <div>
+          <h4>Click analytics</h4>
+          <p>See clicks over time, devices, browsers, countries and referrers for each link.</p>
+        </div>
+        <div>
+          <h4>Password &amp; one-time links</h4>
+          <p>Protect a link with a password, or make it stop working after the first click.</p>
+        </div>
+        <div>
+          <h4>QR codes</h4>
+          <p>Generate a QR code for any link and download it as a PNG.</p>
+        </div>
+        <div>
+          <h4>Custom aliases</h4>
+          <p>Pick your own short code, like <code>/my-portfolio</code> (paid plans).</p>
+        </div>
+        <div>
+          <h4>REST API</h4>
+          <p>Everything in the UI is available over the API. Docs are at <a href="/api-docs" target="_blank">/api-docs</a>.</p>
         </div>
       </div>
-    </div>
+    </section>
+  </main>
 
-    <!-- Stats -->
-    <div class="stats-bar">
-      <div class="stat-item">
-        <div class="stat-number" data-target="1247893">0</div>
-        <div class="stat-label">Links Shortened</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" data-target="45200000">0</div>
-        <div class="stat-label">Total Clicks</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" data-target="10482">0</div>
-        <div class="stat-label">Active Users</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features Section -->
-  <section class="features-section" id="features">
-    <h2>Why <span class="text-gradient">NanoURL</span>?</h2>
-    <p class="section-subtitle">
-      More than just a URL shortener — it's a complete link management platform.
-    </p>
-
-    <div class="features-grid">
-      <div class="feature-card glass-card">
-        <div class="feature-icon purple">⚡</div>
-        <h4>Ultra-Fast Redirects</h4>
-        <p>Sub-100ms redirect latency powered by Redis caching and CDN-ready architecture.</p>
-      </div>
-
-      <div class="feature-card glass-card">
-        <div class="feature-icon pink">📊</div>
-        <h4>Real-Time Analytics</h4>
-        <p>Track clicks, devices, locations, and referrers with beautiful interactive charts.</p>
-      </div>
-
-      <div class="feature-card glass-card">
-        <div class="feature-icon green">🔒</div>
-        <h4>Enterprise Security</h4>
-        <p>Password-protected links, URL validation, and a built-in blacklist system.</p>
-      </div>
-
-      <div class="feature-card glass-card">
-        <div class="feature-icon blue">📱</div>
-        <h4>QR Code Generation</h4>
-        <p>Instantly generate QR codes for any short link. Perfect for print and offline campaigns.</p>
-      </div>
-
-      <div class="feature-card glass-card">
-        <div class="feature-icon orange">🎯</div>
-        <h4>Custom Aliases</h4>
-        <p>Create memorable branded links with custom short codes. <code>/your-brand</code></p>
-      </div>
-
-      <div class="feature-card glass-card">
-        <div class="feature-icon cyan">🚀</div>
-        <h4>API Access</h4>
-        <p>Full REST API with Swagger docs. Integrate URL shortening into your own apps.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="cta-section">
-    <div class="cta-card">
-      <h2>Ready to <span class="text-gradient">level up</span> your links?</h2>
-      <p>Join thousands of marketers, developers, and creators who trust NanoURL.</p>
-      <div class="cta-buttons">
-        <a href="/signup" class="btn btn-primary btn-lg">Start Free — No Credit Card</a>
-        <a href="/pricing" class="btn btn-secondary btn-lg">View Pricing</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
   <footer class="footer">
-    <p>© 2026 NanoURL. Built with ❤️ for the internet.</p>
-    <div class="footer-links">
-      <a href="/api-docs" target="_blank">API Docs</a>
-      <a href="/pricing">Pricing</a>
-      <a href="https://github.com/theNahraf/NanoUrl-Shortner" target="_blank">GitHub</a>
+    <div class="container">
+      <span>&copy; 2026 NanoURL</span>
+      <span>
+        <a href="/api-docs" target="_blank">API docs</a>
+        <a href="/pricing">Pricing</a>
+        <a href="https://github.com/theNahraf/NanoUrl-Shortner" target="_blank">GitHub</a>
+      </span>
     </div>
   </footer>
 
